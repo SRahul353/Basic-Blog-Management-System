@@ -1,0 +1,136 @@
+﻿@model IEnumerable<Basic_Blog_Management_System.Models.Blog.BlogPost>
+
+<div class="container" id="main">
+
+    <div id="blogPostForm">
+    
+        <h3>Create New Post</h3>
+
+    <form asp-controller="Home" asp-action="Create" method="post" id="createBlogForm">
+
+        <input id="PostId" name="PostId" class="form-control" style="display:none" />
+
+
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input id="title" name="Title" class="form-control" required />
+            <div class="invalid-feedback">Please provide a title for the blog post.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="Author">Author:</label>
+            <input id="Author" name="Author" class="form-control" required />
+            <div class="invalid-feedback">Please provide an author name for the blog post.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="Content">Content:</label>
+            <textarea id="Content" name="Content" class="form-control" rows="5" required></textarea>
+            <div class="invalid-feedback">Please provide content for the blog post.</div>
+        </div>
+
+
+        <div class="form-group text-right">
+            <button type="submit" class="btn btn-primary" id="submitBtn">Create Post</button>
+            <button type="submit" class="btn btn-success" style="display:none" id="updateBtn">Update</button>
+            <button type="button" class="btn btn-secondary" style="display:none" id="cancelBtn">Cancel</button>
+
+        </div>
+    </form>
+
+    </div>
+
+    <hr />
+
+    <div id="blogPost">
+
+<h3>Posts</h3>
+
+@{
+            var sortedPosts = Model.OrderByDescending(post => post.DateCreated);
+}
+
+@if (sortedPosts.Any())
+{
+
+    <div class="row">
+                @foreach (var post in sortedPosts)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h3 class="card-title">@post.Title</h3>
+                        <p class="card-subtitle mb-2 text-muted"><strong>Author:</strong> @post.Author</p>
+                        <p class="card-subtitle mb-2 text-muted"><strong>Date Created:</strong> @post.DateCreated.ToString("yyyy-MM-dd hh:mm:ss")</p>
+                        <h5 class="card-text">@post.Content</h5>
+                    </div>
+                    <div class="card-footer">
+                        <table>
+                            <tr>
+                            <form asp-controller="Home" asp-action="Delete" method="post" class="deleteForm">
+                                <input type="hidden" name="postId" value="@post.PostId" />
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                            </tr>
+                                    <tr> &ensp;</tr>
+                            <tr>
+
+                             <a href="javascript:;" class="btn btn-primary editButton" value="@post.PostId">Edit</a>
+
+                            <tr>
+                        </table>
+                       
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+}
+else
+{
+    <p>No blog posts available.</p>
+}
+
+
+</div>
+</div>
+
+
+
+@section Scripts {
+
+    
+    <script>
+        $(document).ready(function () {
+            $('.editButton').click(function () {
+                var postId = $(this).attr('value');
+                var postTitle = $(this).closest('.card').find('.card-title').text();
+                var postContent = $(this).closest('.card').find('.card-text').text();
+                var postAuthor = $(this).closest('.card').find('.card-subtitle').eq(0).text().split(':')[1].trim();
+
+                $('#PostId').val(postId);
+                $('#title').val(postTitle);
+                $('#Content').val(postContent);
+                $('#Author').val(postAuthor);
+
+                $('#updateBtn').show();
+                $('#cancelBtn').show();
+                $('#submitBtn').hide();
+                $('html, body').animate({ scrollTop: 0 }, 'slow');
+            });
+
+            $('#cancelBtn').click(function () {
+                $('#PostId').val('');
+                $('#title').val('');
+                $('#Content').val('');
+                $('#Author').val('');
+
+                $('#updateBtn').hide();
+                $('#cancelBtn').hide();
+                $('#submitBtn').show();
+            });
+        });
+    </script>
+    }
+
