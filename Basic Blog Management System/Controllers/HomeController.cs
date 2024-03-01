@@ -52,17 +52,12 @@ namespace Basic_Blog_Management_System.Controllers
                 var existingPost = await _context.BlogPost.FindAsync(PostId);
                 if (existingPost == null)
                 {
-                    return NotFound(); // Handle if the post doesn't exist
+                    return NotFound(); 
                 }
-
-                // Update properties of the existing post
                 existingPost.Title = title;
                 existingPost.Content = Content;
                 existingPost.Author = Author;
-
-                // Save changes to the database
                 await _context.SaveChangesAsync();
-
                 return RedirectToAction("Index");
             }
 
